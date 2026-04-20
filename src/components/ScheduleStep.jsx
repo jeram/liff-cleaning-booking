@@ -27,10 +27,8 @@ export default function ScheduleStep({ booking, onChange, onNext, onBack }) {
   const maxYear = minYear + (maxMonth > 11 ? 1 : 0)
   const normalizedMaxMonth = maxMonth > 11 ? maxMonth - 12 : maxMonth
 
-  const canGoPrev =
-    viewYear > minYear || (viewYear === minYear && viewMonth > minMonth)
-  const canGoNext =
-    viewYear < maxYear || (viewYear === maxYear && viewMonth < normalizedMaxMonth)
+  const canGoPrev = viewYear > minYear || (viewYear === minYear && viewMonth > minMonth)
+  const canGoNext = viewYear < maxYear || (viewYear === maxYear && viewMonth < normalizedMaxMonth)
 
   function prevMonth() {
     if (!canGoPrev) return
@@ -44,10 +42,7 @@ export default function ScheduleStep({ booking, onChange, onNext, onBack }) {
     else setViewMonth((m) => m + 1)
   }
 
-  function selectDate(dateStr) {
-    onChange({ date: dateStr, time: null })
-  }
-
+  const todayStr = toDateStr(today.getFullYear(), today.getMonth(), today.getDate())
   const availableSlots = booking.date
     ? timeSlots.filter((s) => !(bookedSlots[booking.date] || []).includes(s.id))
     : []
@@ -55,44 +50,42 @@ export default function ScheduleStep({ booking, onChange, onNext, onBack }) {
   return (
     <div className="pt-5 space-y-5">
       <div>
-        <h2 className="text-lg font-semibold text-gray-900">Pick a date & time</h2>
-        <p className="text-sm text-gray-500 mt-0.5">We operate Monday through Saturday, 9 AM – 5 PM.</p>
+        <h2 className="text-xl font-bold text-slate-900">Pick a date & time</h2>
+        <p className="text-sm text-slate-500 mt-1">We operate Monday – Saturday, 9 AM to 5 PM.</p>
       </div>
 
       {/* Calendar */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
         <div className="flex items-center justify-between mb-4">
           <button
             onClick={prevMonth}
             disabled={!canGoPrev}
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
+            className="w-8 h-8 flex items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed text-lg font-light"
           >
             ‹
           </button>
-          <span className="text-sm font-semibold text-gray-900">
+          <span className="text-sm font-bold text-slate-800">
             {MONTHS[viewMonth]} {viewYear}
           </span>
           <button
             onClick={nextMonth}
             disabled={!canGoNext}
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
+            className="w-8 h-8 flex items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed text-lg font-light"
           >
             ›
           </button>
         </div>
 
-        <div className="grid grid-cols-7 mb-2">
+        <div className="grid grid-cols-7 mb-1">
           {DAYS.map((d) => (
-            <div key={d} className="text-center text-[11px] font-medium text-gray-400 py-1">
+            <div key={d} className="text-center text-[11px] font-semibold text-slate-400 py-1 tracking-wide">
               {d}
             </div>
           ))}
         </div>
 
-        <div className="grid grid-cols-7 gap-y-1">
-          {Array.from({ length: firstDay }).map((_, i) => (
-            <div key={`empty-${i}`} />
-          ))}
+        <div className="grid grid-cols-7 gap-y-0.5">
+          {Array.from({ length: firstDay }).map((_, i) => <div key={`e-${i}`} />)}
           {Array.from({ length: daysInMonth }).map((_, i) => {
             const day = i + 1
             const dateStr = toDateStr(viewYear, viewMonth, day)
@@ -102,38 +95,37 @@ export default function ScheduleStep({ booking, onChange, onNext, onBack }) {
             const isFull = fullyBookedDates.has(dateStr)
             const disabled = isPast || isSunday || isFull
             const selected = booking.date === dateStr
-            const isToday = dateStr === toDateStr(today.getFullYear(), today.getMonth(), today.getDate())
+            const isToday = dateStr === todayStr
 
             return (
               <button
                 key={day}
-                onClick={() => !disabled && selectDate(dateStr)}
+                onClick={() => !disabled && onChange({ date: dateStr, time: null })}
                 disabled={disabled}
                 className={`
-                  relative h-9 w-full rounded-lg text-sm font-medium transition-all
-                  ${selected ? 'bg-blue-600 text-white' : ''}
-                  ${!selected && !disabled ? 'hover:bg-blue-50 text-gray-800' : ''}
-                  ${disabled ? 'text-gray-300 cursor-not-allowed' : ''}
-                  ${isFull && !isPast ? 'line-through text-gray-300' : ''}
+                  relative h-9 w-full rounded-xl text-sm font-medium transition-all duration-150
+                  ${selected ? 'bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-md shadow-indigo-200' : ''}
+                  ${!selected && !disabled ? 'text-slate-700 hover:bg-indigo-50 hover:text-indigo-700' : ''}
+                  ${disabled ? 'text-slate-300 cursor-not-allowed' : ''}
                 `}
               >
                 {day}
                 {isToday && !selected && (
-                  <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-blue-500" />
+                  <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-indigo-500" />
                 )}
               </button>
             )
           })}
         </div>
 
-        <div className="flex items-center gap-4 mt-3 pt-3 border-t border-gray-100">
+        <div className="flex items-center gap-5 mt-3 pt-3 border-t border-slate-100">
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded bg-blue-600 inline-block" />
-            <span className="text-[11px] text-gray-500">Selected</span>
+            <span className="w-3 h-3 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 inline-block" />
+            <span className="text-[11px] text-slate-500 font-medium">Selected</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded bg-gray-100 inline-block" />
-            <span className="text-[11px] text-gray-500">Unavailable</span>
+            <span className="w-3 h-3 rounded-lg bg-slate-100 inline-block" />
+            <span className="text-[11px] text-slate-500 font-medium">Unavailable</span>
           </div>
         </div>
       </div>
@@ -141,21 +133,23 @@ export default function ScheduleStep({ booking, onChange, onNext, onBack }) {
       {/* Time slots */}
       {booking.date && (
         <div>
-          <p className="text-sm font-semibold text-gray-700 mb-2">Available times</p>
+          <p className="text-sm font-semibold text-slate-700 mb-2.5">Available times</p>
           {availableSlots.length === 0 ? (
-            <p className="text-sm text-gray-400 text-center py-4">No slots available on this date. Please choose another day.</p>
+            <div className="bg-white rounded-2xl border border-slate-100 p-6 text-center shadow-sm">
+              <p className="text-sm text-slate-400">No slots available on this date. Please choose another day.</p>
+            </div>
           ) : (
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-2.5">
               {availableSlots.map((slot) => {
                 const selected = booking.time === slot.label
                 return (
                   <button
                     key={slot.id}
                     onClick={() => onChange({ time: slot.label })}
-                    className={`py-3 rounded-xl border-2 text-sm font-medium transition-all ${
+                    className={`py-3.5 rounded-2xl text-sm font-semibold transition-all duration-150 ${
                       selected
-                        ? 'border-blue-600 bg-blue-600 text-white'
-                        : 'border-gray-200 bg-white text-gray-800 hover:border-blue-300'
+                        ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-200'
+                        : 'bg-white border border-slate-200 text-slate-700 hover:border-indigo-300 hover:text-indigo-700 shadow-sm'
                     }`}
                   >
                     {slot.label}
@@ -167,17 +161,17 @@ export default function ScheduleStep({ booking, onChange, onNext, onBack }) {
         </div>
       )}
 
-      <div className="sticky bottom-0 pt-2 pb-2 bg-gray-50 flex gap-3">
+      <div className="sticky bottom-0 pt-3 pb-1 bg-slate-100 flex gap-3">
         <button
           onClick={onBack}
-          className="flex-1 py-3.5 rounded-xl border border-gray-200 font-semibold text-sm text-gray-700 bg-white hover:bg-gray-50"
+          className="flex-1 py-4 rounded-2xl border border-slate-200 font-semibold text-sm text-slate-600 bg-white hover:bg-slate-50 shadow-sm"
         >
           Back
         </button>
         <button
           onClick={onNext}
           disabled={!booking.date || !booking.time}
-          className="flex-[2] py-3.5 rounded-xl font-semibold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed bg-blue-600 text-white hover:bg-blue-700"
+          className="flex-[2] py-4 rounded-2xl font-semibold text-sm transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-lg shadow-indigo-200 active:scale-[0.98]"
         >
           Continue
         </button>

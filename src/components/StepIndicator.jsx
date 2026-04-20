@@ -1,17 +1,17 @@
 export default function StepIndicator({ steps, current }) {
   return (
-    <div className="bg-white border-b border-gray-100 px-4 py-3">
+    <div className="bg-white border-b border-slate-200 px-5 py-3.5 shadow-sm">
       <div className="flex items-center max-w-lg mx-auto">
         {steps.map((label, i) => (
           <div key={label} className="flex items-center flex-1 last:flex-none">
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center gap-1">
               <div
-                className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-colors ${
+                className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-200 ${
                   i < current
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-md shadow-indigo-200'
                     : i === current
-                    ? 'bg-blue-600 text-white ring-4 ring-blue-100'
-                    : 'bg-gray-100 text-gray-400'
+                    ? 'bg-gradient-to-br from-indigo-500 to-violet-600 text-white shadow-lg shadow-indigo-300 scale-110'
+                    : 'bg-slate-100 text-slate-400'
                 }`}
               >
                 {i < current ? (
@@ -22,20 +22,12 @@ export default function StepIndicator({ steps, current }) {
                   i + 1
                 )}
               </div>
-              <span
-                className={`text-[10px] mt-1 font-medium ${
-                  i <= current ? 'text-blue-600' : 'text-gray-400'
-                }`}
-              >
-                {label}
+              <span className={`text-[10px] font-semibold tracking-wide ${i <= current ? 'text-indigo-600' : 'text-slate-400'}`}>
+                {label.toUpperCase()}
               </span>
             </div>
             {i < steps.length - 1 && (
-              <div
-                className={`flex-1 h-0.5 mb-4 mx-1 transition-colors ${
-                  i < current ? 'bg-blue-600' : 'bg-gray-200'
-                }`}
-              />
+              <div className={`flex-1 h-0.5 mx-1.5 mb-4 rounded-full transition-all duration-300 ${i < current ? 'bg-gradient-to-r from-indigo-500 to-violet-500' : 'bg-slate-200'}`} />
             )}
           </div>
         ))}

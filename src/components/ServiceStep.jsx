@@ -14,10 +14,10 @@ export default function ServiceStep({ booking, onChange, onNext }) {
   const total = calcTotal(service, selectedAddons)
 
   return (
-    <div className="pt-5 space-y-4">
+    <div className="pt-5 space-y-5">
       <div>
-        <h2 className="text-lg font-semibold text-gray-900">Choose a service</h2>
-        <p className="text-sm text-gray-500 mt-0.5">All services include a professional cleaner and cleaning supplies.</p>
+        <h2 className="text-xl font-bold text-slate-900">Choose a service</h2>
+        <p className="text-sm text-slate-500 mt-1">All services include supplies and a vetted professional cleaner.</p>
       </div>
 
       <div className="space-y-3">
@@ -27,36 +27,46 @@ export default function ServiceStep({ booking, onChange, onNext }) {
             <button
               key={svc.id}
               onClick={() => onChange({ service: svc, addons: [] })}
-              className={`w-full text-left rounded-xl border-2 p-4 transition-all ${
+              className={`w-full text-left rounded-2xl p-4 transition-all duration-200 relative overflow-hidden ${
                 selected
-                  ? 'border-blue-600 bg-blue-50'
-                  : 'border-gray-200 bg-white hover:border-gray-300'
+                  ? 'bg-white border-2 border-indigo-500 shadow-lg shadow-indigo-100'
+                  : 'bg-white border border-slate-200 shadow-sm hover:shadow-md hover:border-slate-300'
               }`}
             >
-              <div className="flex items-start justify-between">
+              {selected && (
+                <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
+                  <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+              )}
+
+              <div className="flex items-start justify-between pr-6">
                 <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-gray-900">{svc.name}</span>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-semibold text-slate-900">{svc.name}</span>
                     {svc.popular && (
-                      <span className="text-[10px] font-semibold px-2 py-0.5 bg-blue-600 text-white rounded-full">
+                      <span className="text-[10px] font-bold px-2 py-0.5 bg-gradient-to-r from-indigo-500 to-violet-600 text-white rounded-full tracking-wide">
                         POPULAR
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-gray-500 mt-0.5">{svc.tagline}</p>
+                  <p className="text-xs text-slate-400 mt-0.5 font-medium">{svc.tagline}</p>
                 </div>
-                <div className="text-right ml-4">
-                  <span className="font-bold text-gray-900">{formatPrice(svc.price)}</span>
+                <div className="text-right ml-4 flex-shrink-0">
+                  <span className="text-lg font-bold text-slate-900">{formatPrice(svc.price)}</span>
                 </div>
               </div>
 
               {selected && (
-                <ul className="mt-3 space-y-1.5 border-t border-blue-200 pt-3">
+                <ul className="mt-3 space-y-1.5 border-t border-slate-100 pt-3">
                   {svc.includes.map((item) => (
-                    <li key={item} className="flex items-center gap-2 text-xs text-gray-700">
-                      <svg className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
+                    <li key={item} className="flex items-center gap-2 text-xs text-slate-600">
+                      <div className="w-4 h-4 rounded-full bg-indigo-50 flex items-center justify-center flex-shrink-0">
+                        <svg className="w-2.5 h-2.5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
                       {item}
                     </li>
                   ))}
@@ -69,7 +79,7 @@ export default function ServiceStep({ booking, onChange, onNext }) {
 
       {service && (
         <div>
-          <p className="text-sm font-semibold text-gray-700 mb-2">Add-ons</p>
+          <p className="text-sm font-semibold text-slate-700 mb-2.5">Add-ons</p>
           <div className="grid grid-cols-2 gap-2">
             {addons.map((addon) => {
               const checked = selectedAddons.includes(addon.id)
@@ -77,14 +87,14 @@ export default function ServiceStep({ booking, onChange, onNext }) {
                 <button
                   key={addon.id}
                   onClick={() => toggleAddon(addon.id)}
-                  className={`flex items-center justify-between rounded-lg border p-3 text-left transition-all ${
+                  className={`flex flex-col rounded-xl p-3 text-left transition-all duration-150 ${
                     checked
-                      ? 'border-blue-600 bg-blue-50'
-                      : 'border-gray-200 bg-white hover:border-gray-300'
+                      ? 'bg-indigo-50 border-2 border-indigo-400 shadow-sm'
+                      : 'bg-white border border-slate-200 shadow-sm hover:border-slate-300'
                   }`}
                 >
-                  <span className="text-xs text-gray-800">{addon.name}</span>
-                  <span className="text-xs font-semibold text-gray-600 ml-2">+{formatPrice(addon.price)}</span>
+                  <span className={`text-xs font-medium ${checked ? 'text-indigo-700' : 'text-slate-700'}`}>{addon.name}</span>
+                  <span className={`text-xs font-semibold mt-0.5 ${checked ? 'text-indigo-600' : 'text-slate-400'}`}>+{formatPrice(addon.price)}</span>
                 </button>
               )
             })}
@@ -92,17 +102,17 @@ export default function ServiceStep({ booking, onChange, onNext }) {
         </div>
       )}
 
-      <div className="sticky bottom-0 pt-4 pb-2 bg-gray-50">
+      <div className="sticky bottom-0 pt-3 pb-1 bg-slate-100">
         {service && (
-          <div className="flex items-center justify-between mb-3 px-1">
-            <span className="text-sm text-gray-500">Total</span>
-            <span className="text-lg font-bold text-gray-900">{formatPrice(total)}</span>
+          <div className="flex items-center justify-between mb-3 bg-white rounded-xl px-4 py-3 shadow-sm border border-slate-100">
+            <span className="text-sm text-slate-500 font-medium">Estimated total</span>
+            <span className="text-xl font-bold text-slate-900">{formatPrice(total)}</span>
           </div>
         )}
         <button
           onClick={onNext}
           disabled={!service}
-          className="w-full py-3.5 rounded-xl font-semibold text-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800"
+          className="w-full py-4 rounded-2xl font-semibold text-sm transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white shadow-lg shadow-indigo-200 active:scale-[0.98]"
         >
           Continue
         </button>
